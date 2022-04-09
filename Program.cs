@@ -5,58 +5,114 @@ using System.Collections.Generic;
 /*
 ID  NAME
 1   Gustavo
-2   Petao
-3   Kokoska
-4   Batak
-5   Kofica
-6   Sombrero
+2   Sombrero
+3   Batak
+4   Kofica
+5   Petao
+6   Kokska
  */
 
 namespace Test
 {
-    class Symbol
-    { 
-        private int ID;
-        private string? Name;
-
-        Symbol(int id, string name) 
-        {
-            ID = id; Name = name;
-        }
-
-        public int id() { return ID; }
-        public string? name() { return Name; }
-    }
-    class Reel 
+    class Reels
     {
-        public const int GUSTAVO = 0, ; 
-        private int len;
-        private Symbol[]? symbols;
+        public const int GUSTAVO = 1;
+        public const int SOMBRERO = 2;
+        public const int BATAK = 3;
+        public const int KOFICA = 4;
+        public const int PETAO = 5;
+        public const int KOKOSKA = 6;
 
-        Reel(int num) {
-            if (num == 1) {
-                symbols = new Symbol[22];
-                foreach (string line in System.IO.File.ReadLines(@"c:\test.txt"))
+        private int[]? reel1;
+        private int[]? reel2;
+        private int[]? reel3;
+
+        long winnings = 0;
+        int Jcount = 0;
+
+        Random rnd = new Random();
+
+        public long won() { return winnings; }
+        public Reels(string fname)
+        {
+
+            using (StreamReader sr = new StreamReader(fname))
+            {
+                string[] elems;
+
+                elems = sr.ReadLine().Split(' ');
+
+                for (int j = 0; j < elems.Length; j++)
                 {
-                    
+                    if (j == 0) reel1 = new int[int.Parse(elems[j])];
+                    else reel1[j - 1] = int.Parse(elems[j]);
+                }
+
+                elems = sr.ReadLine().Split(' ');
+                for (int j = 0; j < elems.Length; j++)
+                {
+                    if (j == 0) reel2 = new int[int.Parse(elems[j])];
+                    else reel2[j - 1] = int.Parse(elems[j]);
+                }
+
+                elems = sr.ReadLine().Split(' ');
+                for (int j = 0; j < elems.Length; j++)
+                {
+                    if (j == 0) reel3 = new int[int.Parse(elems[j])];
+                    else reel3[j - 1] = int.Parse(elems[j]);
                 }
             }
-            
         }
-    }
-    class Simulation
-    {
-        public static void Run() { 
-            
-        }
-    }
 
+        public void spin(int bet)
+        {
+            if (reel1 == null || reel2 == null || reel3 == null) return;
+            int[] res = { rnd.Next(0, reel1.Length), rnd.Next(0, reel2.Length), rnd.Next(0, reel3.Length) };
+
+            if (res[0] == res[1] && res[1] == res[2])
+            {
+                switch (res[0])
+                {
+                    case 2:
+                        winnings += 10 * bet;
+                        break;
+                    case 3:
+                        winnings += 20 * bet;
+                        break;
+                    case 4:
+                        winnings += 30 * bet;
+                        break;
+                    case 5:
+                    case 6:
+                        winnings += 40 * bet;
+                        break;
+                    case 1:
+                        Console.WriteLine(++Jcount);
+                        winnings += 100 * bet;
+                        break;
+                }
+            }
+            else
+            {
+                int cnt = (res[0] == 1 ? 1 : 0) + (res[1] == 1 ? 1 : 0) + (res[2] == 1 ? 1 : 0);
+                if (cnt == 2) winnings += 5 * bet;
+                else if (cnt == 1) winnings += 1 * bet;
+            }
+        }
+
+    }
     class Program
     {
         static void Main(string[] args)
         {
-            for (int i = 0; i < 10000; i++)
-                Simulation.Run();
+            int bet = 1;
+            Reels reels = new Reels("test.txt");
+            for (int i = 0; i < 1000000; i++)
+            {
+                reels.spin(bet);
+            }
+
+            Console.WriteLine(reels.won());
 
         }
     }
