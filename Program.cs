@@ -67,11 +67,11 @@ namespace Test
         public void spin(int bet)
         {
             if (reel1 == null || reel2 == null || reel3 == null) return;
-            int[] res = { rnd.Next(0, reel1.Length), rnd.Next(0, reel2.Length), rnd.Next(0, reel3.Length) };
+            int[] ind = { rnd.Next(0, reel1.Length), rnd.Next(0, reel2.Length), rnd.Next(0, reel3.Length) };
 
-            if (res[0] == res[1] && res[1] == res[2])
+            if (reel1[ind[0]] == reel2[ind[1]] && reel2[ind[1]] == reel3[ind[2]])
             {
-                switch (res[0])
+                switch (reel1[ind[0]])
                 {
                     case 2:
                         winnings += 10 * bet;
@@ -94,7 +94,7 @@ namespace Test
             }
             else
             {
-                int cnt = (res[0] == 1 ? 1 : 0) + (res[1] == 1 ? 1 : 0) + (res[2] == 1 ? 1 : 0);
+                int cnt = (reel1[ind[0]] == 1 ? 1 : 0) + (reel2[ind[1]] == 1 ? 1 : 0) + (reel3[ind[2]] == 1 ? 1 : 0);
                 if (cnt == 2) winnings += 5 * bet;
                 else if (cnt == 1) winnings += 1 * bet;
             }
@@ -112,7 +112,7 @@ namespace Test
                 reels.spin(bet);
             }
 
-            Console.WriteLine(reels.won());
+            Console.WriteLine(1.0 * reels.won() / (1000000*bet));
 
         }
     }
