@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 /*
 ID  NAME
@@ -27,12 +29,13 @@ namespace Test
         private int[]? reel2;
         private int[]? reel3;
 
-        long winnings = 0;
+        long winnings = 1000;
         int Jcount = 0;
 
         Random rnd = new Random();
 
         public long won() { return winnings; }
+        public void bet(int bet) { winnings -= bet; }
         public Reels(string fname)
         {
 
@@ -69,25 +72,33 @@ namespace Test
             if (reel1 == null || reel2 == null || reel3 == null) return;
             int[] ind = { rnd.Next(0, reel1.Length), rnd.Next(0, reel2.Length), rnd.Next(0, reel3.Length) };
 
+            Console.WriteLine("MAIN LINE: ");
+            Console.WriteLine("{0}  {1}  {2} " ,reel1[ind[0]] , reel2[ind[1]] , reel3[ind[2]]);
+
             if (reel1[ind[0]] == reel2[ind[1]] && reel2[ind[1]] == reel3[ind[2]])
             {
                 switch (reel1[ind[0]])
                 {
                     case 2:
                         winnings += 10 * bet;
+                        Console.WriteLine("You won: 10 x bet!");
                         break;
                     case 3:
                         winnings += 20 * bet;
+                        Console.WriteLine("You won: 20 x bet!");
                         break;
                     case 4:
                         winnings += 30 * bet;
+                        Console.WriteLine("You won: 30 x bet!");
                         break;
                     case 5:
                     case 6:
                         winnings += 40 * bet;
+                        Console.WriteLine("You won: 40 x bet!");
                         break;
                     case 1:
-                        Console.WriteLine(++Jcount);
+                        //Console.WriteLine(++Jcount);
+                        Console.WriteLine("You won: JACKPOT!! 100 x bet");
                         winnings += 100 * bet;
                         break;
                 }
@@ -95,8 +106,8 @@ namespace Test
             else
             {
                 int cnt = (reel1[ind[0]] == 1 ? 1 : 0) + (reel2[ind[1]] == 1 ? 1 : 0) + (reel3[ind[2]] == 1 ? 1 : 0);
-                if (cnt == 2) winnings += 5 * bet;
-                else if (cnt == 1) winnings += 1 * bet;
+                if (cnt == 2) { winnings += 5 * bet; Console.WriteLine("You won: 5 x bet!"); }
+                else if (cnt == 1) { winnings += 1 * bet; Console.WriteLine("You won: 1 x bet!"); }
             }
         }
 
@@ -105,14 +116,73 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            string line;
+           // string ;
+            int bet;
+            int input;
+            //int credits = 1000;
+            Reels reels = new Reels("test.txt");
+
+            Console.WriteLine("MAIN MENU");
+            Console.WriteLine("=========\n");
+            Console.WriteLine("TO START THE GAME PRESS 1\n");
+
+            //Console.WriteLine(line);
+
+            while ((line = Console.ReadLine()) != "1") {
+
+                Console.WriteLine("TO START THE GAME PRESS 1");
+
+            }
+
+
+            while (true)
+            {
+                if (reels.won() == 0) { Console.WriteLine("GAME OVER!\n OUT OF CREDITS!" ); break; }
+
+                Console.WriteLine("Current credits: " + reels.won());
+                Console.WriteLine("Place your bet! " );
+
+                line = Console.ReadLine();
+                bet = int.Parse(line);
+                if (bet > reels.won()) {
+                    Console.WriteLine("Not enough credits! Try again!");
+                    continue;
+                }
+                reels.bet(bet);
+                reels.spin(bet);
+
+                
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
             int bet = 1;
             Reels reels = new Reels("test.txt");
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 reels.spin(bet);
             }
 
-            Console.WriteLine(1.0 * reels.won() / (1000000*bet));
+            Console.WriteLine(1.0 * reels.won() / (10000 * bet));
+
+            */
 
         }
     }
